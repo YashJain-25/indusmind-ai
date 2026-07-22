@@ -1,6 +1,3 @@
 fastapi
 uvicorn
-google-generativeai
-neo4j
-qdrant-client
-python-multipart
+requests
