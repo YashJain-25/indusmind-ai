@@ -30,7 +30,7 @@
         </div>
         <div class="flex items-center gap-4">
             <div class="text-[10px] font-mono text-blue-400">v1.0-ENTERPRISE</div>
-            <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold">JD</div>
+            <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold shadow-lg shadow-blue-500/20">JD</div>
         </div>
     </header>
 
@@ -41,7 +41,7 @@
             <div class="p-4 space-y-1">
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-2">Core Modules</p>
                 <div class="agent-active flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold cursor-pointer shadow-sm">
-                    <i class="fas fa-terminal w-4"></i> Command Center
+                    <i class="fas fa-terminal w-4 text-blue-600"></i> Command Center
                 </div>
                 <div class="flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-medium text-gray-600 hover:bg-white cursor-pointer transition">
                     <i class="fas fa-project-diagram w-4"></i> PulseGraph™ Explorer
@@ -115,7 +115,7 @@
                                 <input type="file" id="fileInput" class="hidden" accept="application/pdf,image/*">
                             </label>
                             <textarea id="userInput" rows="1" placeholder="Inquire about Root Cause, Asset History, or Compliance..." class="w-full bg-transparent border-none focus:ring-0 text-sm p-4 outline-none resize-none"></textarea>
-                            <button onclick="orchestrate()" class="m-2 px-8 py-3 bg-[#0078d4] hover:bg-[#106ebe] text-white rounded-lg text-xs font-bold transition flex items-center gap-2">
+                            <button id="executeBtn" onclick="orchestrate()" class="m-2 px-8 py-3 bg-[#0078d4] hover:bg-[#106ebe] text-white rounded-lg text-xs font-bold transition flex items-center gap-2">
                                 <span>Execute</span> <i class="fas fa-bolt"></i>
                             </button>
                         </div>
@@ -131,6 +131,7 @@
     <script>
         let attachedFile = { data: null, mime: "" };
 
+        // Handle File Attachment Logic
         document.getElementById('fileInput').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -138,52 +139,86 @@
             reader.onload = (ev) => {
                 attachedFile.data = ev.target.result.split(',')[1];
                 attachedFile.mime = file.type;
-                document.getElementById('atlas-status').innerText = "Syncing...";
-                alert("Atlas Extract™: Document attached for analysis.");
+                document.getElementById('atlas-status').innerText = "Ready";
+                document.getElementById('atlas-status').className = "text-blue-600 font-bold italic";
             };
             reader.readAsDataURL(file);
         };
 
         async function orchestrate() {
-            const query = document.getElementById('userInput').value;
+            const queryInput = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
             const status = document.getElementById('statusIndicator');
+            const atlasLabel = document.getElementById('atlas-status');
+            const query = queryInput.value;
 
             if(!query) return;
 
-            chatBox.innerHTML += `<div class="flex justify-end max-w-4xl mx-auto mb-4"><div class="bg-[#0078d4] text-white p-4 rounded-xl rounded-tr-none text-sm max-w-xl shadow-md">${query}</div></div>`;
+            // UI: Display User Message
+            chatBox.innerHTML += `
+                <div class="flex justify-end max-w-4xl mx-auto mb-4">
+                    <div class="bg-[#0078d4] text-white p-4 rounded-xl rounded-tr-none text-sm max-w-xl shadow-md border border-blue-500">
+                        ${query}
+                        ${attachedFile.data ? `<div class="mt-2 text-[10px] opacity-70 italic"><i class="fas fa-paperclip"></i> Attachment included</div>` : ''}
+                    </div>
+                </div>`;
+            
             status.classList.remove('hidden');
             chatBox.scrollTop = chatBox.scrollHeight;
+            queryInput.value = ""; // Clear input immediately for UX
 
             try {
+                // Call the Vercel API
                 const response = await fetch('/api/main', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query, file: attachedFile.data, mime: attachedFile.mime })
+                    body: JSON.stringify({ 
+                        query: query,
+                        file: attachedFile.data,
+                        mime: attachedFile.mime
+                    })
                 });
+
+                if (!response.ok) {
+                    throw new Error(`Orion Sync Failed (HTTP ${response.status})`);
+                }
 
                 const data = await response.json();
 
+                // UI: Display Orion Response
                 chatBox.innerHTML += `
                     <div class="flex gap-4 max-w-4xl mx-auto mb-6">
-                        <div class="w-10 h-10 rounded-lg bg-[#001015] flex items-center justify-center flex-shrink-0 border border-blue-500/30 shadow-lg">
+                        <div class="w-10 h-10 rounded-lg bg-[#001015] flex items-center justify-center flex-shrink-0 shadow-lg border border-blue-500/30">
                             <i class="fas fa-brain text-blue-400 text-sm"></i>
                         </div>
                         <div class="space-y-2 flex-grow">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${data.agent}</p>
-                            <div class="bg-white p-5 rounded-2xl rounded-tl-none border border-gray-200 text-sm leading-relaxed text-gray-700 shadow-sm whitespace-pre-wrap">${data.message}</div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${data.agent || 'Orion™'}</p>
+                            <div class="bg-white p-5 rounded-2xl border border-gray-200 text-sm text-gray-700 shadow-sm whitespace-pre-wrap">${data.message}</div>
                         </div>
                     </div>`;
-                attachedFile = { data: null, mime: "" }; // Clear after send
-                document.getElementById('atlas-status').innerText = "Idle";
             } catch (err) {
-                chatBox.innerHTML += `<div class="text-red-500 text-center text-[10px] font-bold">ORION SYNC ERROR</div>`;
+                // Display specific error to user
+                chatBox.innerHTML += `
+                    <div class="bg-red-50 text-red-600 text-center text-[10px] font-bold uppercase p-4 rounded-lg border border-red-200 max-w-4xl mx-auto">
+                        <i class="fas fa-exclamation-triangle"></i> Sync Error: ${err.message}
+                    </div>`;
             } finally {
+                // Reset State
                 status.classList.add('hidden');
-                document.getElementById('userInput').value = "";
+                attachedFile = { data: null, mime: "" };
+                atlasLabel.innerText = "Idle";
+                atlasLabel.className = "text-green-600 font-bold italic";
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
         }
+
+        // Allow 'Enter' key to send message (excluding Shift+Enter)
+        document.getElementById('userInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                orchestrate();
+            }
+        });
     </script>
 </body>
 </html>
