@@ -4,7 +4,76 @@ import requests
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional, Listimport os
+import json
+import requests
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from typing import Optional, List
+
+app = FastAPI(title="ForgeMind AI Orion™ Orchestrator")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class ForgeMindRequest(BaseModel):
+    query: str
+    file: Optional[str] = None
+    mime: Optional[str] = None
+
+class ForgeMindResponse(BaseModel):
+    agent: str
+    message: str
+    confidence: float
+
+API_KEY = os.environ.get("GOOGLE_API_KEY")
+ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent"
+
+def orion_router(query: str, has_file: bool) -> str:
+    q = query.lower()
+    if has_file: return "Atlas Extract™ (Universal Doc Intelligence)"
+    if any(x in q for x in ["fail", "repair", "maintenance", "history"]): return "Sentinel™ (Predictive Maint)"
+    if any(x in q for x in ["comply", "audit", "safety", "iso", "oisd"]): return "Guardian™ (Compliance Intelligence)"
+    if any(x in q for x in ["who", "where", "find"]): return "PulseGraph™ (Knowledge Graph)"
+    return "Cortex™ (Enterprise Copilot)"
+
+@app.post("/api/main")
+async def orchestrate(request: ForgeMindRequest):
+    if not API_KEY:
+        raise HTTPException(status_code=500, detail="Deployment Error: GOOGLE_API_KEY missing.")
+
+    agent = orion_router(request.query, bool(request.file))
+    
+    # System Prompt based on ForgeMind PRD
+    prompt_instruction = f"""
+    You are Orion™, the ForgeMind AI Orchestrator. 
+    Operating through: {agent}.
+    Task: Provide enterprise-grade industrial intelligence. 
+    Reference Knowledge Graph logic and include citations if context exists.
+    """
+
+    payload = {
+        "contents": [{
+            "parts": [
+                {"text": f"{prompt_instruction}\n\nQuery: {request.query}"},
+                *([{"inline_data": {"mime_type": request.mime, "data": request.file}}] if request.file else [])
+            ]
+        }]
+    }
+
+    try:
+        response = requests.post(f"{ENDPOINT}?key={API_KEY}", json=payload, timeout=30)
+        res_data = response.json()
+        ai_msg = res_data['candidates'][0]['content']['parts'][0]['text']
+        
+        return ForgeMindResponse(agent=agent, message=ai_msg, confidence=0.98)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Initialize Orion™ Orchestrator
 app = FastAPI(title="ForgeMind AI Orion™ Engine")
