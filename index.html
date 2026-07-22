@@ -3,88 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IndusMind | AI Command Center</title>
+    <title>ForgeMind AI | Enterprise Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.cdnfonts.com/css/segoe-ui-4" rel="stylesheet">
     <style>
-        :root { --bg-gray: #f3f2f1; --ms-blue: #0078d4; --mica: rgba(255, 255, 255, 0.7); }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-gray); color: #323130; overflow: hidden; }
-        .mica { background: var(--mica); backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(0,0,0,0.05); }
-        .sidebar-item:hover { background: #e1dfdd; }
-        .chat-bubble-ai { background: white; border: 1px solid #e1dfdd; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        :root { --sidebar: #f3f2f1; --accent: #0078d4; --mica: rgba(255, 255, 255, 0.8); }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #faf9f8; color: #323130; }
+        .mica-card { background: var(--mica); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; }
+        .agent-active { color: #0078d4; border-left: 3px solid #0078d4; background: white; }
+        .pulse { animation: pulse-blue 2s infinite; }
+        @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(0, 120, 212, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0, 120, 212, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 120, 212, 0); } }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #c8c6c4; border-radius: 10px; }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="h-screen flex flex-col overflow-hidden">
 
-    <!-- TOP GLOBAL BAR -->
-    <header class="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-6 z-50">
+    <!-- GLOBAL NAV (Microsoft Fabric Style) -->
+    <header class="h-12 bg-[#001015] text-white flex items-center justify-between px-4 z-50">
         <div class="flex items-center gap-4">
-            <i class="fas fa-th text-gray-500 hover:text-blue-600 cursor-pointer"></i>
-            <h1 class="text-xs font-bold tracking-widest text-gray-700">INDUSMIND <span class="font-light text-blue-600">COMMAND</span></h1>
+            <i class="fas fa-th-large text-gray-400 hover:text-white cursor-pointer"></i>
+            <h1 class="text-xs font-bold tracking-[0.2em]">FORGEMIND <span class="font-light text-blue-400">AI</span></h1>
+            <div class="h-4 w-px bg-gray-700 mx-2"></div>
+            <div class="flex items-center gap-2 text-[10px] text-gray-400">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                ORION™ ORCHESTRATOR ONLINE
+            </div>
         </div>
         <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 text-[10px] font-bold rounded-full border border-blue-100">
-                <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span> DEEPSEEK SECURE NODE
-            </div>
-            <div class="w-7 h-7 rounded-full bg-gray-800 flex items-center justify-center text-[10px] text-white font-bold">IM</div>
+            <div class="text-[10px] font-mono text-blue-400">v1.0-ENTERPRISE</div>
+            <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold">JD</div>
         </div>
     </header>
 
     <div class="flex-grow flex overflow-hidden">
         
-        <!-- SIDEBAR -->
-        <aside class="w-64 bg-[#f3f2f1] border-r border-gray-200 flex flex-col p-2 gap-1">
-            <p class="px-4 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Workspace</p>
-            <div class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-md text-xs font-semibold text-blue-700 bg-white shadow-sm cursor-pointer transition">
-                <i class="fas fa-brain"></i> Intelligence Hub
+        <!-- MODULE NAVIGATION (SIDEBAR) -->
+        <nav class="w-64 bg-[#f3f2f1] border-r border-gray-200 flex flex-col overflow-y-auto">
+            <div class="p-4 space-y-1">
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-2">Core Modules</p>
+                <div class="agent-active flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold cursor-pointer shadow-sm">
+                    <i class="fas fa-terminal w-4"></i> AI Command Center
+                </div>
+                <div class="flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-medium text-gray-600 hover:bg-white cursor-pointer transition">
+                    <i class="fas fa-project-diagram w-4"></i> PulseGraph™ Explorer
+                </div>
+                <div class="flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-medium text-gray-600 hover:bg-white cursor-pointer transition">
+                    <i class="fas fa-cube w-4"></i> Digital Twin
+                </div>
+                <div class="flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-medium text-gray-600 hover:bg-white cursor-pointer transition">
+                    <i class="fas fa-shield-check w-4"></i> Guardian™ Compliance
+                </div>
             </div>
-            <div class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-md text-xs font-medium text-gray-600 cursor-pointer transition">
-                <i class="fas fa-industry"></i> Asset Digital Twin
-            </div>
-            <div class="sidebar-item flex items-center gap-3 px-4 py-2.5 rounded-md text-xs font-medium text-gray-600 cursor-pointer transition">
-                <i class="fas fa-shield-halved"></i> Compliance Manager
-            </div>
-        </aside>
 
-        <!-- MAIN AREA -->
-        <main class="flex-grow flex flex-col bg-white relative">
+            <div class="mt-auto p-4 border-t border-gray-200 bg-gray-100/50">
+                <p class="text-[9px] font-bold text-gray-400 uppercase mb-3">Agent Status</p>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-gray-600">Atlas Extract™</span>
+                        <span class="text-green-600 font-bold italic">Idle</span>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-gray-600">Sentinel™</span>
+                        <span class="text-blue-600 font-bold italic">Scanning...</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN COMMAND WORKSPACE -->
+        <main class="flex-grow flex flex-col bg-white">
             
-            <!-- KPIs -->
-            <div class="h-20 border-b border-gray-100 flex items-center px-10 gap-16 bg-white/50">
-                <div><p class="text-[9px] font-bold text-gray-400 uppercase mb-1">Asset Reliability</p><p class="text-xl font-light">98.2%</p></div>
-                <div><p class="text-[9px] font-bold text-gray-400 uppercase mb-1">Active Faults</p><p class="text-xl font-light text-red-600">00</p></div>
-                <div><p class="text-[9px] font-bold text-gray-400 uppercase mb-1">MTBF</p><p class="text-xl font-light text-blue-600">4200h</p></div>
+            <!-- DASHBOARD WIDGETS -->
+            <div class="h-20 border-b border-gray-100 flex items-center px-8 gap-12 bg-white shadow-sm z-10">
+                <div>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">Plant Health Score</p>
+                    <p class="text-xl font-light text-emerald-600">98.2%</p>
+                </div>
+                <div class="w-px h-8 bg-gray-200"></div>
+                <div>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">Risk Index (InsightX™)</p>
+                    <p class="text-xl font-light text-amber-500">Low</p>
+                </div>
+                <div class="w-px h-8 bg-gray-200"></div>
+                <div>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">Knowledge Entities</p>
+                    <p class="text-xl font-light text-gray-800">14,209</p>
+                </div>
             </div>
 
-            <!-- CHAT FEED -->
-            <div id="chatDisplay" class="flex-grow overflow-y-auto p-12 space-y-10 bg-[#faf9f8]">
+            <!-- CHAT / COGNITIVE FEED -->
+            <div id="chatBox" class="flex-grow overflow-y-auto p-12 space-y-8 bg-[#faf9f8]">
+                <!-- Initial Orion Welcome -->
                 <div class="flex gap-5 max-w-4xl mx-auto">
-                    <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-200">
-                        <i class="fas fa-wand-magic-sparkles text-white text-sm"></i>
+                    <div class="w-10 h-10 rounded-lg bg-[#001015] flex items-center justify-center flex-shrink-0 shadow-lg pulse">
+                        <i class="fas fa-brain text-blue-400 text-sm"></i>
                     </div>
                     <div class="space-y-3">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">DeepSeek Intelligence</p>
-                        <div class="chat-bubble-ai p-6 rounded-2xl rounded-tl-none text-sm text-gray-700 leading-relaxed max-w-2xl">
-                            Enterprise Knowledge session initiated. Provide failure logs or asset IDs for Root Cause Analysis.
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Orion™ Orchestrator</p>
+                        <div class="mica-card p-6 rounded-2xl rounded-tl-none text-sm text-gray-700 leading-relaxed shadow-sm">
+                            ForgeMind AI session initialized. I am Orion, your Enterprise AI Orchestrator. 
+                            I have access to **Atlas Extract™**, **PulseGraph™**, and **Sentinel™**.
+                            How can I assist your operations today?
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- COMPOSER -->
+            <!-- COMPOSER AREA -->
             <div class="p-8 bg-white border-t border-gray-200">
                 <div class="max-w-4xl mx-auto">
-                    <div class="mica border border-gray-200 rounded-xl p-1.5 flex items-center shadow-xl focus-within:border-blue-400 transition">
-                        <textarea id="userQuery" rows="1" placeholder="Describe industrial deviation or inquiry..." class="w-full bg-transparent border-none focus:ring-0 text-sm p-4 outline-none resize-none"></textarea>
-                        <button onclick="sendToBackend()" class="mx-2 px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-2">
-                            <span>Analyze</span> <i class="fas fa-bolt text-[10px]"></i>
-                        </button>
+                    <div class="relative mica-card border border-gray-200 rounded-xl p-1 shadow-2xl focus-within:ring-2 focus-within:ring-blue-500/20 transition">
+                        <div class="flex items-center">
+                            <label class="p-4 text-gray-400 hover:text-blue-600 cursor-pointer transition">
+                                <i class="fas fa-paperclip"></i>
+                                <input type="file" id="fileInput" class="hidden">
+                            </label>
+                            <textarea id="userInput" rows="1" placeholder="Inquire about Root Cause, Asset History, or Compliance..." class="w-full bg-transparent border-none focus:ring-0 text-sm p-4 outline-none resize-none"></textarea>
+                            <button onclick="orchestrate()" class="m-2 px-8 py-3 bg-[#0078d4] hover:bg-[#106ebe] text-white rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-blue-500/30">
+                                <span>Execute</span>
+                                <i class="fas fa-bolt"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div id="status" class="hidden mt-3 text-[10px] font-bold text-blue-600 flex items-center gap-2 tracking-widest">
-                        <i class="fas fa-cog fa-spin"></i> CALCULATING INDUSTRIAL LOGIC...
+                    <div id="statusIndicator" class="hidden mt-3 text-[10px] font-bold text-blue-600 flex items-center gap-2">
+                        <i class="fas fa-spinner fa-spin"></i> ORION IS COORDINATING SPECIALIZED AGENTS...
                     </div>
                 </div>
             </div>
@@ -92,25 +136,58 @@
     </div>
 
     <script>
-        async function sendToBackend() {
-            const query = document.getElementById('userQuery').value;
-            const display = document.getElementById('chatDisplay');
-            const status = document.getElementById('status');
+        async function orchestrate() {
+            const query = document.getElementById('userInput').value;
+            const chatBox = document.getElementById('chatBox');
+            const status = document.getElementById('statusIndicator');
 
             if(!query) return;
 
-            display.innerHTML += `<div class="flex justify-end max-w-4xl mx-auto"><div class="bg-blue-600 text-white p-5 rounded-2xl rounded-tr-none text-sm shadow-md max-w-xl">${query}</div></div>`;
+            // Add User Prompt
+            chatBox.innerHTML += `
+                <div class="flex justify-end max-w-4xl mx-auto">
+                    <div class="bg-blue-600 text-white p-5 rounded-2xl rounded-tr-none text-sm shadow-md max-w-xl">
+                        ${query}
+                    </div>
+                </div>`;
+            
             status.classList.remove('hidden');
-            display.scrollTop = display.scrollHeight;
+            chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // IMPORTANT: We now call our own backend, NOT DeepSeek directly
-                const response = await fetch('/api/chat', {
+                // Call Vercel API
+                const response = await fetch('/api/main', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: query })
+                    body: JSON.stringify({ query: query })
                 });
-
                 const data = await response.json();
-                
-                display.innerHTML += `
+
+                // Add Orion Response
+                chatBox.innerHTML += `
+                    <div class="flex gap-5 max-w-4xl mx-auto">
+                        <div class="w-10 h-10 rounded-lg bg-[#001015] flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-brain text-blue-400 text-sm"></i>
+                        </div>
+                        <div class="space-y-3">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${data.agent} Analysis</p>
+                            <div class="mica-card p-6 rounded-2xl rounded-tl-none text-sm text-gray-700 leading-relaxed border-l-4 border-blue-500">
+                                ${data.message}
+                                <div class="mt-4 pt-4 border-t border-gray-100 flex gap-4 text-[10px] text-gray-400 font-bold uppercase italic">
+                                    <span>Confidence: ${data.confidence}%</span>
+                                    <span>Source: PulseGraph™</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            } catch (e) {
+                chatBox.innerHTML += `<p class="text-red-500 text-center text-xs">Orion Sync Error</p>`;
+            } finally {
+                status.classList.add('hidden');
+                document.getElementById('userInput').value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
