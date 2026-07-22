@@ -3,32 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ForgeMind AI | Enterprise Command Center</title>
+    <title>ForgeMind AI | Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.cdnfonts.com/css/segoe-ui-4" rel="stylesheet">
     <style>
         :root { --sidebar: #f3f2f1; --accent: #0078d4; --mica: rgba(255, 255, 255, 0.8); }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #faf9f8; color: #323130; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #faf9f8; color: #323130; overflow: hidden; }
         .mica-card { background: var(--mica); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; }
         .agent-active { color: #0078d4; border-left: 3px solid #0078d4; background: white; }
-        .pulse { animation: pulse-blue 2s infinite; }
-        @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(0, 120, 212, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0, 120, 212, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 120, 212, 0); } }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #c8c6c4; border-radius: 10px; }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body class="h-screen flex flex-col">
 
-    <!-- GLOBAL NAV (Microsoft Fabric Style) -->
+    <!-- TOP GLOBAL NAV -->
     <header class="h-12 bg-[#001015] text-white flex items-center justify-between px-4 z-50">
         <div class="flex items-center gap-4">
             <i class="fas fa-th-large text-gray-400 hover:text-white cursor-pointer"></i>
             <h1 class="text-xs font-bold tracking-[0.2em]">FORGEMIND <span class="font-light text-blue-400">AI</span></h1>
             <div class="h-4 w-px bg-gray-700 mx-2"></div>
-            <div class="flex items-center gap-2 text-[10px] text-gray-400">
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                ORION™ ORCHESTRATOR ONLINE
+            <div class="flex items-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest font-bold">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Orion™ Orchestrator Online
             </div>
         </div>
         <div class="flex items-center gap-4">
@@ -39,12 +36,12 @@
 
     <div class="flex-grow flex overflow-hidden">
         
-        <!-- MODULE NAVIGATION (SIDEBAR) -->
+        <!-- MODULE NAVIGATION -->
         <nav class="w-64 bg-[#f3f2f1] border-r border-gray-200 flex flex-col overflow-y-auto">
             <div class="p-4 space-y-1">
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-2">Core Modules</p>
                 <div class="agent-active flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-semibold cursor-pointer shadow-sm">
-                    <i class="fas fa-terminal w-4"></i> AI Command Center
+                    <i class="fas fa-terminal w-4"></i> Command Center
                 </div>
                 <div class="flex items-center gap-3 px-3 py-2 rounded-sm text-xs font-medium text-gray-600 hover:bg-white cursor-pointer transition">
                     <i class="fas fa-project-diagram w-4"></i> PulseGraph™ Explorer
@@ -62,68 +59,64 @@
                 <div class="space-y-2">
                     <div class="flex justify-between items-center text-[10px]">
                         <span class="text-gray-600">Atlas Extract™</span>
-                        <span class="text-green-600 font-bold italic">Idle</span>
+                        <span id="atlas-status" class="text-green-600 font-bold italic">Idle</span>
                     </div>
                     <div class="flex justify-between items-center text-[10px]">
                         <span class="text-gray-600">Sentinel™</span>
-                        <span class="text-blue-600 font-bold italic">Scanning...</span>
+                        <span class="text-blue-600 font-bold italic">Monitoring</span>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <!-- MAIN COMMAND WORKSPACE -->
+        <!-- MAIN WORKSPACE -->
         <main class="flex-grow flex flex-col bg-white">
             
-            <!-- DASHBOARD WIDGETS -->
+            <!-- DASHBOARD RIBBON -->
             <div class="h-20 border-b border-gray-100 flex items-center px-8 gap-12 bg-white shadow-sm z-10">
                 <div>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase">Plant Health Score</p>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">Plant Health</p>
                     <p class="text-xl font-light text-emerald-600">98.2%</p>
                 </div>
                 <div class="w-px h-8 bg-gray-200"></div>
                 <div>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase">Risk Index (InsightX™)</p>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">InsightX™ Risk</p>
                     <p class="text-xl font-light text-amber-500">Low</p>
                 </div>
                 <div class="w-px h-8 bg-gray-200"></div>
                 <div>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase">Knowledge Entities</p>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase">Graph Entities</p>
                     <p class="text-xl font-light text-gray-800">14,209</p>
                 </div>
             </div>
 
-            <!-- CHAT / COGNITIVE FEED -->
+            <!-- CHAT FEED -->
             <div id="chatBox" class="flex-grow overflow-y-auto p-12 space-y-8 bg-[#faf9f8]">
-                <!-- Initial Orion Welcome -->
                 <div class="flex gap-5 max-w-4xl mx-auto">
-                    <div class="w-10 h-10 rounded-lg bg-[#001015] flex items-center justify-center flex-shrink-0 shadow-lg pulse">
+                    <div class="w-10 h-10 rounded-lg bg-[#001015] flex items-center justify-center flex-shrink-0 shadow-lg">
                         <i class="fas fa-brain text-blue-400 text-sm"></i>
                     </div>
                     <div class="space-y-3">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Orion™ Orchestrator</p>
-                        <div class="mica-card p-6 rounded-2xl rounded-tl-none text-sm text-gray-700 leading-relaxed shadow-sm">
-                            ForgeMind AI session initialized. I am Orion, your Enterprise AI Orchestrator. 
-                            I have access to **Atlas Extract™**, **PulseGraph™**, and **Sentinel™**.
-                            How can I assist your operations today?
+                        <div class="mica-card p-6 rounded-2xl rounded-tl-none text-sm text-gray-700 leading-relaxed border border-gray-100">
+                            Enterprise Knowledge session initialized. I am Orion™. You may upload P&ID drawings via Atlas Extract™ or inquire about asset history.
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- COMPOSER AREA -->
+            <!-- COMPOSER -->
             <div class="p-8 bg-white border-t border-gray-200">
                 <div class="max-w-4xl mx-auto">
-                    <div class="relative mica-card border border-gray-200 rounded-xl p-1 shadow-2xl focus-within:ring-2 focus-within:ring-blue-500/20 transition">
+                    <div class="mica-card border border-gray-200 rounded-xl p-1 shadow-2xl focus-within:ring-2 focus-within:ring-blue-500/20 transition">
                         <div class="flex items-center">
                             <label class="p-4 text-gray-400 hover:text-blue-600 cursor-pointer transition">
                                 <i class="fas fa-paperclip"></i>
-                                <input type="file" id="fileInput" class="hidden">
+                                <input type="file" id="fileInput" class="hidden" accept="application/pdf,image/*">
                             </label>
                             <textarea id="userInput" rows="1" placeholder="Inquire about Root Cause, Asset History, or Compliance..." class="w-full bg-transparent border-none focus:ring-0 text-sm p-4 outline-none resize-none"></textarea>
-                            <button onclick="orchestrate()" class="m-2 px-8 py-3 bg-[#0078d4] hover:bg-[#106ebe] text-white rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-blue-500/30">
-                                <span>Execute</span>
-                                <i class="fas fa-bolt"></i>
+                            <button onclick="orchestrate()" class="m-2 px-8 py-3 bg-[#0078d4] hover:bg-[#106ebe] text-white rounded-lg text-xs font-bold transition flex items-center gap-2">
+                                <span>Execute</span> <i class="fas fa-bolt"></i>
                             </button>
                         </div>
                     </div>
@@ -136,6 +129,21 @@
     </div>
 
     <script>
+        let attachedFile = { data: null, mime: "" };
+
+        document.getElementById('fileInput').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                attachedFile.data = ev.target.result.split(',')[1];
+                attachedFile.mime = file.type;
+                document.getElementById('atlas-status').innerText = "Syncing...";
+                alert("Atlas Extract™: Document attached for analysis.");
+            };
+            reader.readAsDataURL(file);
+        };
+
         async function orchestrate() {
             const query = document.getElementById('userInput').value;
             const chatBox = document.getElementById('chatBox');
@@ -143,45 +151,33 @@
 
             if(!query) return;
 
-            // Add User Prompt
-            chatBox.innerHTML += `
-                <div class="flex justify-end max-w-4xl mx-auto">
-                    <div class="bg-blue-600 text-white p-5 rounded-2xl rounded-tr-none text-sm shadow-md max-w-xl">
-                        ${query}
-                    </div>
-                </div>`;
-            
+            chatBox.innerHTML += `<div class="flex justify-end max-w-4xl mx-auto mb-4"><div class="bg-[#0078d4] text-white p-4 rounded-xl rounded-tr-none text-sm max-w-xl shadow-md">${query}</div></div>`;
             status.classList.remove('hidden');
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // Call Vercel API
                 const response = await fetch('/api/main', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query })
+                    body: JSON.stringify({ query: query, file: attachedFile.data, mime: attachedFile.mime })
                 });
+
                 const data = await response.json();
 
-                // Add Orion Response
                 chatBox.innerHTML += `
-                    <div class="flex gap-5 max-w-4xl mx-auto">
-                        <div class="w-10 h-10 rounded-lg bg-[#001015] flex items-center justify-center flex-shrink-0">
+                    <div class="flex gap-4 max-w-4xl mx-auto mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-[#001015] flex items-center justify-center flex-shrink-0 border border-blue-500/30 shadow-lg">
                             <i class="fas fa-brain text-blue-400 text-sm"></i>
                         </div>
-                        <div class="space-y-3">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${data.agent} Analysis</p>
-                            <div class="mica-card p-6 rounded-2xl rounded-tl-none text-sm text-gray-700 leading-relaxed border-l-4 border-blue-500">
-                                ${data.message}
-                                <div class="mt-4 pt-4 border-t border-gray-100 flex gap-4 text-[10px] text-gray-400 font-bold uppercase italic">
-                                    <span>Confidence: ${data.confidence}%</span>
-                                    <span>Source: PulseGraph™</span>
-                                </div>
-                            </div>
+                        <div class="space-y-2 flex-grow">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${data.agent}</p>
+                            <div class="bg-white p-5 rounded-2xl rounded-tl-none border border-gray-200 text-sm leading-relaxed text-gray-700 shadow-sm whitespace-pre-wrap">${data.message}</div>
                         </div>
                     </div>`;
-            } catch (e) {
-                chatBox.innerHTML += `<p class="text-red-500 text-center text-xs">Orion Sync Error</p>`;
+                attachedFile = { data: null, mime: "" }; // Clear after send
+                document.getElementById('atlas-status').innerText = "Idle";
+            } catch (err) {
+                chatBox.innerHTML += `<div class="text-red-500 text-center text-[10px] font-bold">ORION SYNC ERROR</div>`;
             } finally {
                 status.classList.add('hidden');
                 document.getElementById('userInput').value = "";
