@@ -1,11 +1,11 @@
 import os
 import requests
+import json
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -13,37 +13,61 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-API_KEY = os.environ.get("GOOGLE_API_KEY")
+# Read DeepSeek Key from Vercel
+API_KEY = os.environ.get("DEEPSEEK_API_KEY")
 
 @app.get("/api/main")
 async def health():
-    return {"status": "Backend is reachable", "key_configured": bool(API_KEY)}
+    return {
+        "status": "Orion Online", 
+        "engine": "DeepSeek-V3",
+        "key_present": bool(API_KEY)
+    }
 
 @app.post("/api/main")
 async def orchestrate(request: Request):
     try:
         body = await request.json()
-        user_query = body.get("query", "No query provided")
-        
-        if not API_KEY:
-            return {"agent": "System", "message": "ERROR: GOOGLE_API_KEY missing in Vercel Env."}
+        user_query = body.get("query", "")
 
-        # Logic
-        agent = "Orion™ Orchestrator"
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={API_KEY}"
+        if not API_KEY:
+            return {"agent": "System", "message": "Critical: DEEPSEEK_API_KEY missing in Vercel Env."}
+
+        # DeepSeek API Endpoint (OpenAI Compatible)
+        url = "https://api.deepseek.com/chat/completions"
         
-        payload = {
-            "contents": [{"parts": [{"text": user_query}]}]
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {API_KEY}"
         }
 
-        response = requests.post(url, json=payload, timeout=10)
+        # Orion Orchestration Logic
+        q = user_query.lower()
+        agent = "Cortex™ (Copilot)"
+        if any(x in q for x in ["fail", "repair", "history"]):
+            agent = "Sentinel™ (Predictive Maint)"
+        elif any(x in q for x in ["audit", "comply", "safety", "oisd"]):
+            agent = "Guardian™ (Compliance Intelligence)"
+
+        # DeepSeek Payload
+        payload = {
+            "model": "deepseek-chat",
+            "messages": [
+                {"role": "system", "content": f"You are Orion, ForgeMind AI. Operating Agent: {agent}. Provide high-density industrial technical analysis."},
+                {"role": "user", "content": user_query}
+            ],
+            "stream": False
+        }
+
+        # Call DeepSeek API
+        response = requests.post(url, headers=headers, json=payload, timeout=30)
         data = response.json()
 
-        if "candidates" in data:
-            ai_msg = data['candidates'][0]['content']['parts'][0]['text']
-            return {"agent": agent, "message": ai_msg}
-        else:
-            return {"agent": "System", "message": f"Gemini Error: {str(data)}"}
+        if "error" in data:
+            return {"agent": "System", "message": f"DeepSeek Error: {data['error']['message']}"}
+
+        ai_msg = data['choices'][0]['message']['content']
+        return {"agent": agent, "message": ai_msg}
 
     except Exception as e:
-        return {"agent": "System", "message": f"Backend Crash: {str(e)}"}
+        return {"agent": "System", "message": f"Backend Exception: {str(e)}"}
